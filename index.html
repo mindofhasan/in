@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mind Of Hasan</title>
+
+  <!-- Bengali font -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&display=swap" rel="stylesheet" />
+  
+  <!-- Font Awesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-bG8/j0xWQWcuJvM2MXs7B2MRiDkIMWDiy+V7PU7ZC7nM6k7loazp2pmwZAcsv9dO4frOAEFP1bZpL2tfNb4WZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Noto Serif Bengali', serif;
+      overflow: hidden;
+    }
+
+    body.light {
+      background: #f5f5f5;
+      color: #000;
+    }
+
+    body.dark {
+      background: #121212;
+      color: #fff;
+    }
+
+    .container {
+      position: absolute;
+      top: 53%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: inherit;
+      border-radius: 20px;
+      padding: 30px;
+      border: 3px solid #4CAF50;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      text-align: center;
+      z-index: 1;
+      width: 300px;
+      max-width: 90vw;
+    }
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px dashed #007bff;
+    }
+
+    h1 { font-size: 32px; margin: 10px 0; }
+    p { font-size: 18px; }
+
+    .links a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 6px;
+      border: 2px solid;
+    }
+
+    .facebook { color: #1877f2; border-color: #1877f2; background: #fff; }
+    .tiktok { color: #000; border-color: #000; background: #fff; }
+    .youtube { color: red; border-color: red; background: #fff; }
+    .comment-btn {
+      background: white;
+      color: #25D366;
+      border: 2px solid #25D366;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.4);
+      z-index: 99;
+      display: none;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px 25px;
+      z-index: 100;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .popup.active {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .popup h2 {
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .popup input,
+    .popup textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .popup textarea {
+      resize: none;
+    }
+
+    .popup button {
+      padding: 12px 20px;
+      background-color: #25D366;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #ff4444;
+      font-weight: bold;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    input, textarea {
+      margin-top: 10px;
+    }
+
+    marquee {
+      font-size: 22px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div class="container" id="title">
+    <img class="profile-pic" src="https://i.postimg.cc/fWXj0ZT1/20250612-214508.png" alt="Profile Picture">
+    <h1>Mind Of Hasan</h1>
+    <marquee behavior="scroll" direction="left">
+      ভাগ্যে যা আছে, তা-ই হবে, আমি শুধু চেষ্টা করে যাবো,
+      হার-জিতের চিন্তা নয়, নিজের পথে নিঃশব্দে হাঁটবো ।
+    </marquee>
+    <div class="links">
+      <a class="facebook" href="https://www.facebook.com/share/1GFisgoXwf/" target="_blank">
+        <i class="fab fa-facebook"></i> Facebook
+      </a>
+      <a class="tiktok" href="https://www.tiktok.com/@mindofhasan?_t=ZS-8x9Aj5Xuywa&_r=1" target="_blank">
+        <i class="fab fa-tiktok"></i> TikTok
+      </a>
+      <a class="youtube" href="https://youtube.com/@mind-of-hasan" target="_blank">
+        <i class="fab fa-youtube"></i> YouTube
+      </a>
+      <a class="comment-btn" id="commentBtn">
+        <i class="fas fa-comment-dots"></i> মতামত দিন
+      </a>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="popup" id="popup">
+    <span class="close-btn" id="closePopup">×</span>
+    <h2>মতামত দিন</h2>
+    <form id="commentForm" style="width: 100%;">
+      <input type="text" id="name" placeholder="আপনার নাম *" required />
+      <input type="email" id="email" placeholder="ইমেইল *" required />
+      <textarea rows="5" id="comment" placeholder="আপনার মন্তব্য লিখুন..."></textarea>
+      <div style="display: flex; justify-content: center;">
+        <button type="submit">সাবমিট করুন</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Theme
+    const hour = new Date().getHours();
+    document.body.classList.add((hour >= 18 || hour < 6) ? "dark" : "light");
+
+    // Particle Animation
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const title = document.getElementById("title").getBoundingClientRect();
+    const particles = [];
+    const particleCount = 150;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 8 + 2;
+        this.weight = Math.random() * 1 + 1;
+        this.directionX = -2;
+        this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        this.bounced = false;
+      }
+
+      update() {
+        if (this.y > canvas.height) {
+          this.y = 0 - this.size;
+          this.x = Math.random() * canvas.width;
+          this.weight = Math.random() * 1 + 1;
+          this.bounced = false;
+        }
+
+        this.weight += 0.05;
+        this.y += this.weight;
+        this.x += this.directionX;
+
+        if (!this.bounced && this.x < title.right && this.x + this.size > title.left && this.y < title.bottom && this.y + this.size > title.top) {
+          this.weight *= -0.5;
+          this.bounced = true;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    initParticles();
+    animate();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Popup Logic
+    const commentBtn = document.getElementById("commentBtn");
+    const popup = document.getElementById("popup");
+    const overlay = document.getElementById("overlay");
+    const closePopup = document.getElementById("closePopup");
+
+    commentBtn.onclick = () => {
+      popup.classList.add("active");
+      overlay.classList.add("active");
+    };
+
+    closePopup.onclick = () => {
+      popup.classList.remove("active");
+      overlay.classList.remove("active");
+    };
+
+    // Telegram Submission
+    document.getElementById("commentForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const comment = document.getElementById("comment").value.trim();
+
+      const message = `📥 নতুন মতামত পাওয়া গেছে:\n\n👤 নাম: ${name}\n📧 যোগাযোগ: ${email}\n💬 মন্তব্য: ${comment}`;
+      const botToken = '7939187410:AAHP11GGEnEO-Zl6DQJ8sxTzxh7Jl2yMsww';  // তোমার টেলিগ্রাম বট টোকেন
+      const chatId = '6684908368';      // তোমার চ্যাট আইডি
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message })
+      })
+      .then(response => {
+        if (response.ok) {
+          alert(`✅ ধন্যবাদ ${name}! আপনার মতামত সফলভাবে পাঠানো হয়েছে।`);
+        } else {
+          alert("❌ দুঃখিত, মতামত পাঠাতে সমস্যা হয়েছে।");
+        }
+        popup.classList.remove("active");
+        overlay.classList.remove("active");
+      })
+      .catch(error => {
+        alert("⚠️ ত্রুটি: মতামত পাঠানো যায়নি।");
+        console.error("Telegram API error:", error);
+        popup.classList.remove("active");
+        overlay.classList.remove("active");
+      });
+    });
+  </script>
+</body>
+</html>
