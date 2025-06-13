@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&display=swap" rel="stylesheet" />
   
   <!-- Font Awesome CDN for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-bG8/j0xWQWcuJvM2MXs7B2MRiDkIMWDiy+V7PU7ZC7nM6k7loazp2pmwZAcsv9dO4frOAEFP1bZpL2tfNb4WZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
     html, body {
@@ -79,7 +79,7 @@
       cursor: pointer;
     }
 
-    .overlay {
+    .overlay, #shareOverlay {
       position: fixed;
       top: 0;
       left: 0;
@@ -91,11 +91,11 @@
       display: none;
     }
 
-    .overlay.active {
+    .overlay.active, #shareOverlay.active {
       display: block;
     }
 
-    .popup {
+    .popup, #sharePopup {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -114,19 +114,19 @@
       gap: 16px;
     }
 
-    .popup.active {
+    .popup.active, #sharePopup.active {
       transform: translate(-50%, -50%) scale(1);
     }
 
-    .popup h2 {
+    .popup h2, #sharePopup h2 {
       text-align: center;
       margin: 0;
       font-size: 24px;
       color: #333;
     }
 
-    .popup input,
-    .popup textarea {
+    .popup input, .popup textarea,
+    #sharePopup input {
       width: 100%;
       padding: 14px 16px;
       border-radius: 10px;
@@ -139,7 +139,7 @@
       resize: none;
     }
 
-    .popup button {
+    .popup button, #sharePopup button {
       padding: 12px 20px;
       background-color: #25D366;
       color: white;
@@ -188,22 +188,25 @@
     </marquee>
     <div class="links">
       <a class="facebook" href="https://www.facebook.com/share/1GFisgoXwf/" target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="20" height="20" alt="FB Logo" /> Facebook
+        <i class="fab fa-facebook"></i> Facebook
       </a>
       <a class="tiktok" href="https://www.tiktok.com/@mindofhasan?_t=ZS-8x9Aj5Xuywa&_r=1" target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046122.png" width="20" height="20" alt="TikTok Logo" /> TikTok
+        <i class="fab fa-tiktok"></i> TikTok
       </a>
       <a class="youtube" href="https://youtube.com/@mind-of-hasan" target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20" height="20" alt="YT Logo" /> YouTube
+        <i class="fab fa-youtube"></i> YouTube
       </a>
       <a class="comment-btn" id="commentBtn">
         <i class="fas fa-comment-dots"></i> মতামত দিন
       </a>
+      <a class="comment-btn" id="shareBtn">
+        <i class="fas fa-share-alt"></i> শেয়ার
+      </a>
     </div>
   </div>
 
+  <!-- মতামত পপআপ -->
   <div class="overlay" id="overlay"></div>
-
   <div class="popup" id="popup">
     <span class="close-btn" id="closePopup">×</span>
     <h2>মতামত দিন</h2>
@@ -217,17 +220,26 @@
     </form>
   </div>
 
+  <!-- শেয়ার পপআপ -->
+  <div class="overlay" id="shareOverlay"></div>
+  <div class="popup" id="sharePopup">
+    <span class="close-btn" id="closeSharePopup">×</span>
+    <h2>শেয়ার করুন</h2>
+    <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px; border: 1px solid #ccc;" />
+    <input type="text" id="shareLink" readonly value="" style="text-align: center;" />
+    <button onclick="copyShareLink()">কপি করুন</button>
+  </div>
+
   <script>
-    // Theme
+    // থিম
     const hour = new Date().getHours();
     document.body.classList.add((hour >= 18 || hour < 6) ? "dark" : "light");
 
-    // Particle Animation
+    // ক্যানভাস পার্টিকল
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
     const title = document.getElementById("title").getBoundingClientRect();
     const particles = [];
     const particleCount = 150;
@@ -293,7 +305,7 @@
       canvas.height = window.innerHeight;
     });
 
-    // Popup Logic
+    // মতামত পপআপ লজিক
     const commentBtn = document.getElementById("commentBtn");
     const popup = document.getElementById("popup");
     const overlay = document.getElementById("overlay");
@@ -309,7 +321,7 @@
       overlay.classList.remove("active");
     };
 
-    // Telegram Submission
+    // টেলিগ্রাম সাবমিশন
     document.getElementById("commentForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -329,7 +341,7 @@
       .then(response => {
         if (response.ok) {
           alert(`✅ ধন্যবাদ ${name}! আপনার মতামত সফলভাবে পাঠানো হয়েছে।`);
-          document.getElementById("commentForm").reset(); // Reset form fields
+          document.getElementById("commentForm").reset();
         } else {
           alert("❌ দুঃখিত, মতামত পাঠাতে সমস্যা হয়েছে।");
         }
@@ -343,6 +355,34 @@
         overlay.classList.remove("active");
       });
     });
+
+    // শেয়ার পপআপ লজিক
+    const shareBtn = document.getElementById("shareBtn");
+    const sharePopup = document.getElementById("sharePopup");
+    const shareOverlay = document.getElementById("shareOverlay");
+    const closeSharePopup = document.getElementById("closeSharePopup");
+    const shareLinkInput = document.getElementById("shareLink");
+    const qrImage = document.getElementById("qrImage");
+
+    shareBtn.onclick = () => {
+      const currentURL = window.location.href;
+      shareLinkInput.value = currentURL;
+      qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(currentURL)}&size=200x200`;
+      sharePopup.classList.add("active");
+      shareOverlay.classList.add("active");
+    };
+
+    closeSharePopup.onclick = () => {
+      sharePopup.classList.remove("active");
+      shareOverlay.classList.remove("active");
+    };
+
+    function copyShareLink() {
+      shareLinkInput.select();
+      shareLinkInput.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      alert("✅ লিংক কপি হয়েছে!");
+    }
   </script>
 </body>
-  </html>
+</html>
