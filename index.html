@@ -29,11 +29,16 @@
       z-index: 100;
     }
     .container {
+  background: rgba(255, 255, 255, 0.1); /* হালকা সাদা ট্রান্সপারেন্ট */
+  backdrop-filter: blur(7px);          /* ব্যাকগ্রাউন্ড ব্লার */
+  -webkit-backdrop-filter: blur(10px);  /* সাফারি সাপোর্টের জন্য */
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2); /* হালকা বর্ডার */
       position: absolute;
       top: 53%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: inherit;
+    
       border-radius: 20px;
       padding: 30px;
       border: 3px solid #4CAF50;
@@ -191,6 +196,28 @@
       border: 1px solid #ccc;
       align-self: center;
     }
+    .cx{
+      font-size: 22px;
+    }
+    .username {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.verified-badge {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-top: 1px;
+}
   </style>
 </head>
 <body>
@@ -199,7 +226,20 @@
   <div class="theme-toggle" id="themeToggle"><i class="fas fa-adjust"></i></div>
   <div class="container" id="title">
     <img class="profile-pic" src="mind_of_hasan.png" alt="Profile Picture">
-    <h1>Mind Of Hasan</h1>
+   <h1 class="username">
+  Mind Of Hasan
+  <span class="verified-badge"></span>
+</h1>
+    <marquee class="cx"
+  behavior="scroll" 
+  direction="left" 
+  scrollamount="4" 
+  onmouseover="this.stop();" 
+  onmouseout="this.start();"
+>
+  ভাগ্যে যা আছে, তা-ই হবে, আমি শুধু চেষ্টা করে যাবো,
+হার-জিতের চিন্তা নয়, নিজের পথে নিঃশব্দে হাঁটবো ।
+</marquee>
     <div class="links">
       <a class="facebook" href="https://www.facebook.com/share/1GFisgoXwf/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
       <a class="tiktok" href="https://www.tiktok.com/@mindofhasan" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
