@@ -1,35 +1,33 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mind Of Hasan</title>
-
-  <!-- Bengali font -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&display=swap" rel="stylesheet" />
-  
-  <!-- Font Awesome CDN for icons -->
+  <meta name="description" content="Official personal site of Mind of Hasan - YouTuber, content creator and storyteller." />
+  <meta name="keywords" content="Mind of Hasan, YouTube, TikTok, public feedback, private feedback" />
+  <meta name="author" content="Mind of Hasan" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
   <style>
+    * { box-sizing: border-box; }
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: 'Noto Serif Bengali', serif;
+      font-family: 'Noto Serif', serif;
       overflow: hidden;
+      transition: background 0.4s, color 0.4s;
     }
-
-    body.light {
-      background: #f5f5f5;
-      color: #000;
+    body.light { background: #f5f5f5; color: #000; }
+    body.dark { background: #121212; color: #fff; }
+    .theme-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 100;
     }
-
-    body.dark {
-      background: #121212;
-      color: #fff;
-    }
-
     .container {
       position: absolute;
       top: 53%;
@@ -45,17 +43,13 @@
       width: 300px;
       max-width: 90vw;
     }
-
     .profile-pic {
       width: 120px;
       height: 120px;
       border-radius: 50%;
       border: 4px solid #00FF39;
     }
-
-    h1 { font-size: 32px; margin: 10px 0; }
-    p { font-size: 18px; }
-
+    h1 { font-size: 28px; margin: 10px 0; }
     .links a {
       display: flex;
       justify-content: center;
@@ -68,7 +62,6 @@
       margin: 6px;
       border: 2px solid;
     }
-
     .facebook { color: #1877f2; border-color: #1877f2; background: #fff; }
     .tiktok { color: #000; border-color: #000; background: #fff; }
     .youtube { color: red; border-color: red; background: #fff; }
@@ -78,27 +71,21 @@
       border: 2px solid #25D366;
       cursor: pointer;
     }
-
     .overlay, #shareOverlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       backdrop-filter: blur(6px);
       background: rgba(0,0,0,0.4);
       z-index: 99;
       display: none;
     }
-
     .overlay.active, #shareOverlay.active {
       display: block;
     }
-
     .popup, #sharePopup {
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%) scale(0);
       background: #fff;
       border-radius: 20px;
@@ -110,35 +97,26 @@
       transition: transform 0.3s ease;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 16px;
     }
-
     .popup.active, #sharePopup.active {
       transform: translate(-50%, -50%) scale(1);
     }
-
     .popup h2, #sharePopup h2 {
       text-align: center;
       margin: 0;
-      font-size: 24px;
+      font-size: 22px;
       color: #333;
     }
-
-    .popup input, .popup textarea,
-    #sharePopup input {
+    .popup input, .popup textarea, #sharePopup input {
       width: 100%;
       padding: 14px 16px;
       border-radius: 10px;
       border: 1px solid #ccc;
       font-size: 16px;
-      box-sizing: border-box;
+      margin-bottom: 14px;
     }
-
-    .popup textarea {
-      resize: none;
-    }
-
+    .popup textarea { resize: none; }
     .popup button, #sharePopup button {
       padding: 12px 20px;
       background-color: #25D366;
@@ -148,8 +126,8 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      align-self: center;
     }
-
     .close-btn {
       position: absolute;
       top: 12px;
@@ -159,230 +137,232 @@
       color: #ff4444;
       font-weight: bold;
     }
-
     canvas {
       position: fixed;
       top: 0;
       left: 0;
       z-index: 0;
     }
-
-    input, textarea {
-      margin-top: 10px;
+    .tab-labels {
+      display: flex;
+      justify-content: space-around;
+      border-bottom: 2px solid #ccc;
     }
-
-    marquee {
-      font-size: 22px;
+    .tab-text {
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+    }
+    .tab-text.active::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #25D366;
+      border-radius: 2px;
+    }
+    .hidden { display: none; }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 15px;
+      z-index: 999;
+      animation: fade 0.3s ease;
+    }
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #sharePopup input {
+      text-align: center;
+    }
+    #qrImage {
+      width: 200px;
+      height: 200px;
+      border: 1px solid #ccc;
+      align-self: center;
     }
   </style>
 </head>
 <body>
+  <!-- Canvas background for animation -->
   <canvas id="canvas"></canvas>
-
+  <div class="theme-toggle" id="themeToggle"><i class="fas fa-adjust"></i></div>
   <div class="container" id="title">
-    <img class="profile-pic" src="mind_of_hasan.png.png" alt="Profile Picture">
+    <img class="profile-pic" src="mind_of_hasan.png" alt="Profile Picture">
     <h1>Mind Of Hasan</h1>
-    <marquee behavior="scroll" direction="left">
-      ভাগ্যে যা আছে, তা-ই হবে, আমি শুধু চেষ্টা করে যাবো,
-      হার-জিতের চিন্তা নয়, সফলতার পথে নিঃশব্দে হাঁটবো ।
-    </marquee>
     <div class="links">
-      <a class="facebook" href="https://www.facebook.com/share/1GFisgoXwf/" target="_blank">
-        <i class="fab fa-facebook"></i> Facebook
-      </a>
-      <a class="tiktok" href="https://www.tiktok.com/@mindofhasan?_t=ZS-8x9Aj5Xuywa&_r=1" target="_blank">
-        <i class="fab fa-tiktok"></i> TikTok
-      </a>
-      <a class="youtube" href="https://youtube.com/@mind-of-hasan" target="_blank">
-        <i class="fab fa-youtube"></i> YouTube
-      </a>
-      <a class="comment-btn" id="commentBtn">
-        <i class="fas fa-comment-dots"></i> মতামত দিন
-      </a>
-      <a class="comment-btn" id="shareBtn">
-        <i class="fas fa-share-alt"></i> শেয়ার
-      </a>
+      <a class="facebook" href="https://www.facebook.com/share/1GFisgoXwf/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+      <a class="tiktok" href="https://www.tiktok.com/@mindofhasan" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+      <a class="youtube" href="https://youtube.com/@mind-of-hasan" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+      <a class="comment-btn" id="commentBtn"><i class="fas fa-comment-dots"></i> Feedback</a>
+      <a class="comment-btn" id="shareBtn"><i class="fas fa-share-alt"></i> Share</a>
     </div>
   </div>
-
-  <!-- মতামত পপআপ -->
+  <!-- Feedback Popup -->
   <div class="overlay" id="overlay"></div>
   <div class="popup" id="popup">
     <span class="close-btn" id="closePopup">×</span>
-    <h2>মতামত দিন</h2>
-    <form id="commentForm" style="width: 100%;">
-      <input type="text" id="name" placeholder="আপনার নাম *" required />
-      <input type="email" id="email" placeholder="ইমেইল *" required />
-      <textarea rows="5" id="comment" placeholder="আপনার মন্তব্য লিখুন..."></textarea>
-      <div style="display: flex; justify-content: center;">
-        <button type="submit">সাবমিট করুন</button>
-      </div>
+    <h2>Feedback</h2>
+    <div class="tab-labels">
+      <div class="tab-text active" id="publicTab">Public</div>
+      <div class="tab-text" id="privateTab">Private</div>
+    </div>
+    <form id="commentForm">
+      <input type="text" id="name" placeholder="Your name *" required />
+      <input type="email" id="email" placeholder="Email *" required />
+      <textarea rows="5" id="comment" placeholder="Your comment..."></textarea>
+      <button type="submit">Submit</button>
     </form>
   </div>
-
-  <!-- শেয়ার পপআপ -->
+  <!-- Share Popup -->
   <div class="overlay" id="shareOverlay"></div>
   <div class="popup" id="sharePopup">
     <span class="close-btn" id="closeSharePopup">×</span>
-    <h2>শেয়ার করুন</h2>
-    <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px; border: 1px solid #ccc;" />
-    <input type="text" id="shareLink" readonly value="" style="text-align: center;" />
-    <button onclick="copyShareLink()">কপি করুন</button>
+    <h2>Share This Page</h2>
+    <img id="qrImage" src="" alt="QR Code" />
+    <input type="text" id="shareLink" readonly value="" />
+    <button onclick="copyShareLink()">Copy Link</button>
   </div>
-
+  <div id="toast" class="toast" style="display:none"></div>
   <script>
-    // থিম
-    const hour = new Date().getHours();
-    document.body.classList.add((hour >= 18 || hour < 6) ? "dark" : "light");
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      document.body.classList.toggle('light');
+    });const commentBtn = document.getElementById("commentBtn");
+const popup = document.getElementById("popup");
+const overlay = document.getElementById("overlay");
+const closePopup = document.getElementById("closePopup");
+commentBtn.onclick = () => { popup.classList.add("active"); overlay.classList.add("active"); };
+closePopup.onclick = () => { popup.classList.remove("active"); overlay.classList.remove("active"); };
 
-    // ক্যানভাস পার্টিকল
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const title = document.getElementById("title").getBoundingClientRect();
-    const particles = [];
-    const particleCount = 150;
+const shareBtn = document.getElementById("shareBtn");
+const sharePopup = document.getElementById("sharePopup");
+const shareOverlay = document.getElementById("shareOverlay");
+const closeSharePopup = document.getElementById("closeSharePopup");
+const shareLinkInput = document.getElementById("shareLink");
+const qrImage = document.getElementById("qrImage");
+shareBtn.onclick = () => {
+  const url = window.location.href;
+  shareLinkInput.value = url;
+  qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=200x200`;
+  sharePopup.classList.add("active");
+  shareOverlay.classList.add("active");
+};
+closeSharePopup.onclick = () => {
+  sharePopup.classList.remove("active");
+  shareOverlay.classList.remove("active");
+};
+function copyShareLink() {
+  shareLinkInput.select();
+  document.execCommand("copy");
+  showToast("Link copied to clipboard!");
+}
 
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 8 + 2;
-        this.weight = Math.random() * 1 + 1;
-        this.directionX = -2;
-        this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-        this.bounced = false;
-      }
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+  setTimeout(() => { toast.style.display = "none"; }, 3000);
+}
 
-      update() {
-        if (this.y > canvas.height) {
-          this.y = 0 - this.size;
-          this.x = Math.random() * canvas.width;
-          this.weight = Math.random() * 1 + 1;
-          this.bounced = false;
-        }
+const publicTab = document.getElementById("publicTab");
+const privateTab = document.getElementById("privateTab");
+let selectedTab = "public";
+publicTab.onclick = () => { selectedTab = "public"; publicTab.classList.add("active"); privateTab.classList.remove("active"); };
+privateTab.onclick = () => { selectedTab = "private"; privateTab.classList.add("active"); publicTab.classList.remove("active"); };
 
-        this.weight += 0.05;
-        this.y += this.weight;
-        this.x += this.directionX;
+document.getElementById("commentForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const comment = document.getElementById("comment").value.trim();
 
-        if (!this.bounced && this.x < title.right && this.x + this.size > title.left && this.y < title.bottom && this.y + this.size > title.top) {
-          this.weight *= -0.5;
-          this.bounced = true;
-        }
-      }
+  const cacheKey = `feedback_${selectedTab}`;
+  const lastTime = localStorage.getItem(cacheKey);
+  const now = Date.now();
+  if (lastTime && now - lastTime < 86400000) {
+    showToast("You can only submit once every 24 hours.");
+    return;
+  }
 
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
-      }
-    }
-
-    function initParticles() {
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-      }
-      requestAnimationFrame(animate);
-    }
-
-    initParticles();
-    animate();
-
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-
-    // মতামত পপআপ লজিক
-    const commentBtn = document.getElementById("commentBtn");
-    const popup = document.getElementById("popup");
-    const overlay = document.getElementById("overlay");
-    const closePopup = document.getElementById("closePopup");
-
-    commentBtn.onclick = () => {
-      popup.classList.add("active");
-      overlay.classList.add("active");
-    };
-
-    closePopup.onclick = () => {
-      popup.classList.remove("active");
-      overlay.classList.remove("active");
-    };
-
-    // টেলিগ্রাম সাবমিশন
-    document.getElementById("commentForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const comment = document.getElementById("comment").value.trim();
-
-      const message = `💬 নতুন মতামত পাওয়া গেছে•••••••\n\n👤 নামঃ ${name}\n📧 যোগাযোগঃ ${email}\n💬 মন্তব্যঃ ${comment}`;
-      const botToken = '7939187410:AAHP11GGEnEO-Zl6DQJ8sxTzxh7Jl2yMsww';
-      const chatId = '6684908368';
-
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chatId, text: message })
-      })
-      .then(response => {
-        if (response.ok) {
-          alert(`✅ ধন্যবাদ ${name}! আপনার মতামত সফলভাবে পাঠানো হয়েছে।`);
-          document.getElementById("commentForm").reset();
-        } else {
-          alert("❌ দুঃখিত, মতামত পাঠাতে সমস্যা হয়েছে।");
-        }
+  const message = `New ${selectedTab} feedback:\nName: ${name}\nEmail: ${email}\nComment: ${comment}`;
+  const chatId = selectedTab === "private" ? "6684908368" : "-1002581767406";
+  const botToken = "7939187410:AAHP11GGEnEO-Zl6DQJ8sxTzxh7Jl2yMsww";
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text: message })
+  })
+    .then(response => {
+      if (response.ok) {
+        localStorage.setItem(cacheKey, now);
+        showToast("Feedback submitted successfully.");
+        document.getElementById("commentForm").reset();
         popup.classList.remove("active");
         overlay.classList.remove("active");
-      })
-      .catch(error => {
-        alert("⚠️ ত্রুটি: মতামত পাঠানো যায়নি।");
-        console.error("Telegram API error:", error);
-        popup.classList.remove("active");
-        overlay.classList.remove("active");
-      });
+      } else {
+        showToast("Error sending feedback.");
+      }
+    })
+    .catch(error => {
+      console.error("Telegram API error:", error);
+      showToast("Submission failed. Try again later.");
     });
+});
 
-    // শেয়ার পপআপ লজিক
-    const shareBtn = document.getElementById("shareBtn");
-    const sharePopup = document.getElementById("sharePopup");
-    const shareOverlay = document.getElementById("shareOverlay");
-    const closeSharePopup = document.getElementById("closeSharePopup");
-    const shareLinkInput = document.getElementById("shareLink");
-    const qrImage = document.getElementById("qrImage");
-
-    shareBtn.onclick = () => {
-      const currentURL = window.location.href;
-      shareLinkInput.value = currentURL;
-      qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(currentURL)}&size=200x200`;
-      sharePopup.classList.add("active");
-      shareOverlay.classList.add("active");
-    };
-
-    closeSharePopup.onclick = () => {
-      sharePopup.classList.remove("active");
-      shareOverlay.classList.remove("active");
-    };
-
-    function copyShareLink() {
-      shareLinkInput.select();
-      shareLinkInput.setSelectionRange(0, 99999);
-      document.execCommand("copy");
-      alert("✅ লিংক কপি হয়েছে!");
+// Canvas animation (simple floating particles)
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = [];
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 7 *1;
+    this.speed = Math.random() * 1 + 1;
+    this.direction = Math.random() * Math.PI * 2;
+    this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+  }
+  update() {
+    this.x += Math.cos(this.direction) * this.speed;
+    this.y += Math.sin(this.direction) * this.speed;
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
     }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
+for (let i = 0; i < 100; i++) { particles.push(new Particle()); }
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
   </script>
 </body>
 </html>
