@@ -66,6 +66,7 @@
       font-weight: bold;
       margin: 6px;
       border: 2px solid;
+      background: rgba(255, 255, 255, 0.1);
     }
     .facebook { color: #1877f2; border-color: #1877f2; background: #fff; }
     .tiktok { color: #000; border-color: #000; background: #fff; }
@@ -102,7 +103,9 @@
       transition: transform 0.3s ease;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 16px;background: 
+      rgba(255, 255, 255, 0.1);
+      border: 1px solid red;
     }
     .popup.active, #sharePopup.active {
       transform: translate(-50%, -50%) scale(1);
@@ -218,6 +221,24 @@
   vertical-align: middle;
   margin-top: 1px;
 }
+body.light .popup h2,
+body.light #sharePopup h2 {
+  color: #000;
+}
+
+body.dark .popup h2,
+body.dark #sharePopup h2 {
+  color: #fff;
+}
+input,textarea{
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+#qrImage {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
   </style>
 </head>
 <body>
@@ -225,12 +246,12 @@
   <canvas id="canvas"></canvas>
   <div class="theme-toggle" id="themeToggle"><i class="fas fa-adjust"></i></div>
   <div class="container" id="title">
-    <img class="profile-pic" src="mind_of_hasan.png" alt="Profile Picture">
+    <img class="profile-pic" src="mind of hasan.png" alt="Profile Picture">
    <h1 class="username">
   Mind Of Hasan
   <span class="verified-badge"></span>
 </h1>
-    <marquee class="cx"
+    <marquee class="cx"‌
   behavior="scroll" 
   direction="left" 
   scrollamount="4" 
@@ -274,78 +295,113 @@
     <button onclick="copyShareLink()">Copy Link</button>
   </div>
   <div id="toast" class="toast" style="display:none"></div>
-  <script>
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      document.body.classList.toggle('light');
-    });const commentBtn = document.getElementById("commentBtn");
-const popup = document.getElementById("popup");
-const overlay = document.getElementById("overlay");
-const closePopup = document.getElementById("closePopup");
-commentBtn.onclick = () => { popup.classList.add("active"); overlay.classList.add("active"); };
-closePopup.onclick = () => { popup.classList.remove("active"); overlay.classList.remove("active"); };
+<script>
+  const themeToggle = document.getElementById('themeToggle');
+  const qrImage = document.getElementById("qrImage");
 
-const shareBtn = document.getElementById("shareBtn");
-const sharePopup = document.getElementById("sharePopup");
-const shareOverlay = document.getElementById("shareOverlay");
-const closeSharePopup = document.getElementById("closeSharePopup");
-const shareLinkInput = document.getElementById("shareLink");
-const qrImage = document.getElementById("qrImage");
-shareBtn.onclick = () => {
-  const url = window.location.href;
-  shareLinkInput.value = url;
-  qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=200x200`;
-  sharePopup.classList.add("active");
-  shareOverlay.classList.add("active");
-};
-closeSharePopup.onclick = () => {
-  sharePopup.classList.remove("active");
-  shareOverlay.classList.remove("active");
-};
-function copyShareLink() {
-  shareLinkInput.select();
-  document.execCommand("copy");
-  showToast("Link copied to clipboard!");
-}
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    document.body.classList.toggle('light');
 
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.style.display = "block";
-  setTimeout(() => { toast.style.display = "none"; }, 3000);
-}
+    if (document.getElementById("sharePopup").classList.contains('active')) {
+      qrImage.src = document.body.classList.contains("dark") ? "dark.png" : "light.png";
+    }
+  });
 
-const publicTab = document.getElementById("publicTab");
-const privateTab = document.getElementById("privateTab");
-let selectedTab = "public";
-publicTab.onclick = () => { selectedTab = "public"; publicTab.classList.add("active"); privateTab.classList.remove("active"); };
-privateTab.onclick = () => { selectedTab = "private"; privateTab.classList.add("active"); publicTab.classList.remove("active"); };
+  const commentBtn = document.getElementById("commentBtn");
+  const popup = document.getElementById("popup");
+  const overlay = document.getElementById("overlay");
+  const closePopup = document.getElementById("closePopup");
 
-document.getElementById("commentForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const comment = document.getElementById("comment").value.trim();
+  commentBtn.onclick = () => {
+    popup.classList.add("active");
+    overlay.classList.add("active");
+  };
+  closePopup.onclick = () => {
+    popup.classList.remove("active");
+    overlay.classList.remove("active");
+  };
 
-  const cacheKey = `feedback_${selectedTab}`;
-  const lastTime = localStorage.getItem(cacheKey);
-  const now = Date.now();
-  if (lastTime && now - lastTime < 86400000) {
-    showToast("You can only submit once every 24 hours.");
-    return;
+  const shareBtn = document.getElementById("shareBtn");
+  const sharePopup = document.getElementById("sharePopup");
+  const shareOverlay = document.getElementById("shareOverlay");
+  const closeSharePopup = document.getElementById("closeSharePopup");
+  const shareLinkInput = document.getElementById("shareLink");
+
+  shareBtn.onclick = () => {
+    const url = window.location.href;
+    shareLinkInput.value = url;
+    qrImage.src = document.body.classList.contains("dark") ? "dark.png" : "light.png";
+    sharePopup.classList.add("active");
+    shareOverlay.classList.add("active");
+  };
+
+  closeSharePopup.onclick = () => {
+    sharePopup.classList.remove("active");
+    shareOverlay.classList.remove("active");
+  };
+
+  function copyShareLink() {
+    shareLinkInput.select();
+    document.execCommand("copy");
+    showToast("Link copied to clipboard!");
   }
 
-  const message = `New ${selectedTab} feedback:\nName: ${name}\nEmail: ${email}\nComment: ${comment}`;
-  const chatId = selectedTab === "private" ? "6684908368" : "-1002581767406";
-  const botToken = "7939187410:AAHP11GGEnEO-Zl6DQJ8sxTzxh7Jl2yMsww";
-  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text: message })
-  })
-    .then(response => {
-      if (response.ok) {
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 3000);
+  }
+
+  // ✅ শুধু ইমেইল মাস্ক করার ফাংশন
+  function maskEmail(email) {
+    const [user, domain] = email.split("@");
+    return user[0] + "*".repeat(user.length - 1) + "@g****.com";
+  }
+
+  // ✅ ফর্ম সাবমিশন হ্যান্ডলার
+  document.getElementById("commentForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const comment = document.getElementById("comment").value.trim();
+    const now = Date.now();
+
+    const cacheKey = "feedback_once_a_day";
+    const lastTime = localStorage.getItem(cacheKey);
+
+    if (lastTime && now - lastTime < 86400000) {
+      showToast("You can only submit once every 24 hours.");
+      return;
+    }
+
+    const botToken = "7939187410:AAHP11GGEnEO-Zl6DQJ8sxTzxh7Jl2yMsww";
+    const publicChatId = "-1002581767406";
+    const privateChatId = "6684908368";
+
+    // ✅ পাবলিক মেসেজ (ইমেইল মাস্ক করা)
+    const publicMessage = `🗣 Public Feedback:\nName: ${name}\nEmail: ${maskEmail(email)}\nComment: ${comment}`;
+    // ✅ প্রাইভেট মেসেজ (সম্পূর্ণ তথ্য)
+    const privateMessage = `🔒 Private Feedback:\nName: ${name}\nEmail: ${email}\nComment: ${comment}`;
+
+    Promise.all([
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: privateChatId, text: privateMessage }),
+      }),
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: publicChatId, text: publicMessage }),
+      })
+    ])
+    .then(responses => {
+      if (responses.every(r => r.ok)) {
         localStorage.setItem(cacheKey, now);
         showToast("Feedback submitted successfully.");
         document.getElementById("commentForm").reset();
@@ -359,50 +415,59 @@ document.getElementById("commentForm").addEventListener("submit", function (e) {
       console.error("Telegram API error:", error);
       showToast("Submission failed. Try again later.");
     });
-});
+  });
 
-// Canvas animation (simple floating particles)
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-const particles = [];
-class Particle {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 3 + 7 *1;
-    this.speed = Math.random() * 1 + 1;
-    this.direction = Math.random() * Math.PI * 2;
-    this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
-  }
-  update() {
-    this.x += Math.cos(this.direction) * this.speed;
-    this.y += Math.sin(this.direction) * this.speed;
-    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-    }
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-  }
-}
-for (let i = 0; i < 100; i++) { particles.push(new Particle()); }
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-window.addEventListener("resize", () => {
+  // ✅ ফ্লোটিং পার্টিকেল (আপনার আগের particle animation)
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-});
+  const particles = [];
 
-  </script>
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 3 + 7;
+      this.speed = Math.random() * 1 + 1;
+      this.direction = Math.random() * Math.PI * 2;
+      this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+    }
+    update() {
+      this.x += Math.cos(this.direction) * this.speed;
+      this.y += Math.sin(this.direction) * this.speed;
+      if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+      }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 100; i++) {
+    particles.push(new Particle());
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+  }
+
+  animateParticles();
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
 </body>
 </html>
