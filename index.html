@@ -202,15 +202,21 @@
     .cx{
       font-size: 22px;
     }
-    .username {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 1;
-}
-
+  .inbox-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px 18px;
+    margin-left: 111px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+  }
 .verified-badge {
   display: inline-block;
   width: 18px;
@@ -239,10 +245,14 @@ input,textarea{
   outline: none;
   box-shadow: none;
 }
+.cx1{
+  font-size: 13px;
+}
 
   </style>
 </head>
 <body>
+  <canvas id="canvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
   <!-- Canvas background for animation -->
   <canvas id="canvas"></canvas>
   <div class="theme-toggle" id="themeToggle"><i class="fas fa-adjust"></i></div>
@@ -253,7 +263,7 @@ input,textarea{
   <span class="verified-badge"></span>
 </h1>
     <marquee class="cx"‌
-  behavior="scroll" 
+    behavior="scroll" 
   direction="left" 
   scrollamount="4" 
   onmouseover="this.stop();" 
@@ -277,13 +287,34 @@ input,textarea{
     <h2>Feedback</h2>
     <div class="tab-labels">
       <div class="tab-text active" id="publicTab">Public</div>
-      <div class="tab-text" id="privateTab">Private</div>
+     
     </div>
     <form id="commentForm">
+       <marquee class="cx1"‌
+  behavior="scroll" 
+  direction="left" 
+  scrollamount="5" 
+  onmouseover="this.stop();" 
+  onmouseout="this.start();"
+>
+  আপনার কন্টাক্ট ইনফরমেশন কখনোই পাবলিক করা হয় না, নিশ্চিন্ত থাকুন। আপনার তথ্য সাবমিট হওয়ার পর আপনি এটি দেখতে পারেন। দেখতে চাইলে ইনবক্স বাটনে ক্লিক করুন।
+</marquee>
       <input type="text" id="name" placeholder="Your name *" required />
       <input type="email" id="email" placeholder="Email *" required />
+       
       <textarea rows="5" id="comment" placeholder="Your comment..."></textarea>
       <button type="submit">Submit</button>
+<!-- Font Awesome CDN -->
+<!-- Font Awesome for inbox icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <a href="https://t.me/+s7jnyo1bVGljZTEInbo"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="inbox-button">
+    <i class="fas fa-inbox"></i> Inbox
+  </a>
+</div>
     </form>
   </div>
   <!-- Share Popup -->
@@ -343,9 +374,11 @@ input,textarea{
   };
 
   function copyShareLink() {
-    shareLinkInput.select();
-    document.execCommand("copy");
-    showToast("Link copied to clipboard!");
+    navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+      showToast("Link copied to clipboard!");
+    }).catch(() => {
+      showToast("Failed to copy.");
+    });
   }
 
   function showToast(message) {
@@ -357,13 +390,11 @@ input,textarea{
     }, 3000);
   }
 
-  // ✅ শুধু ইমেইল মাস্ক করার ফাংশন
   function maskEmail(email) {
     const [user, domain] = email.split("@");
     return user[0] + "*".repeat(user.length - 1) + "@g****.com";
   }
 
-  // ✅ ফর্ম সাবমিশন হ্যান্ডলার
   document.getElementById("commentForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -384,9 +415,7 @@ input,textarea{
     const publicChatId = "-1002581767406";
     const privateChatId = "6684908368";
 
-    // ✅ পাবলিক মেসেজ (ইমেইল মাস্ক করা)
     const publicMessage = `🗣 Public Feedback:\nName: ${name}\nEmail: ${maskEmail(email)}\nComment: ${comment}`;
-    // ✅ প্রাইভেট মেসেজ (সম্পূর্ণ তথ্য)
     const privateMessage = `🔒 Private Feedback:\nName: ${name}\nEmail: ${email}\nComment: ${comment}`;
 
     Promise.all([
@@ -418,56 +447,93 @@ input,textarea{
     });
   });
 
-  // ✅ ফ্লোটিং পার্টিকেল (আপনার আগের particle animation)
+  // ✅ Particle Animation with Themed Background
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  const particles = [];
+
+  const colors = ["#ff3b3b", "#3bff3b", "#3b3bff", "#ffff3b", "#ff3bff"];
+  const sizes = [5, 6, 7, 8, 10];
+
+  const mouse = {
+    x: undefined,
+    y: undefined,
+    radius: 80
+  };
+
+  window.addEventListener("mousemove", function (e) {
+    mouse.x = e.x;
+    mouse.y = e.y;
+  });
 
   class Particle {
     constructor() {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.size = Math.random() * 3 + 7;
-      this.speed = Math.random() * 1 + 1;
-      this.direction = Math.random() * Math.PI * 2;
-      this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+      this.size = sizes[Math.floor(Math.random() * sizes.length)];
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.weight = Math.random() * 1 + 1;
+      this.directionX = Math.random() * 4 - 2;
     }
+
     update() {
-      this.x += Math.cos(this.direction) * this.speed;
-      this.y += Math.sin(this.direction) * this.speed;
-      if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+      if (this.y > canvas.height) {
+        this.y = 0 - this.size;
         this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        this.weight = Math.random() * 1 + 2;
+      }
+
+      this.weight += 0.05;
+      this.y += this.weight;
+      this.x += this.directionX;
+
+      const dx = this.x - mouse.x;
+      const dy = this.y - mouse.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < mouse.radius + this.size) {
+        this.y -= 2;
+        this.weight *= -0.5;
       }
     }
+
     draw() {
+      ctx.fillStyle = this.color;
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = this.color;
+      ctx.closePath();
       ctx.fill();
     }
   }
 
-  for (let i = 0; i < 100; i++) {
-    particles.push(new Particle());
+  let particles = [];
+  function init() {
+    particles = [];
+    for (let i = 0; i < 200; i++) {
+      particles.push(new Particle());
+    }
   }
 
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  function animate() {
+    const isDark = document.body.classList.contains("dark");
+    ctx.fillStyle = isDark ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     particles.forEach(p => {
       p.update();
       p.draw();
     });
-    requestAnimationFrame(animateParticles);
+    requestAnimationFrame(animate);
   }
 
-  animateParticles();
+  init();
+  animate();
 
   window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    init();
   });
 </script>
 </body>
