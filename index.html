@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mind Of Hasan</title>
+  <meta name="description" content="Official personal site of Mind of Hasan - YouTuber, content creator and storyteller." />
+  <meta name="keywords" content="Mind of Hasan, YouTube, TikTok, public feedback, private feedback" />
+  <meta name="author" content="Mind of Hasan" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: 'Noto Serif', serif;
+      overflow: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+    body.light { background: #f5f5f5; color: #000; }
+    body.dark  { background: #121212; color: #fff; }
+
+    /* Top controls */
+    .theme-toggle, .anim-toggle, .menu-toggle {
+      position: fixed; top: 15px; z-index: 110;
+      font-size: 22px; cursor: pointer;
+      width: 38px; height: 38px; border-radius: 10px;
+      display: grid; place-items: center;
+      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      user-select: none;
+    }
+    .menu-toggle { left: 15px; }
+    .theme-toggle { right: 15px; }
+    .anim-toggle { right: 60px; } /* theme-এর বাম পাশে */
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: absolute;
+      top: 53%; left: 50%; transform: translate(-50%, -50%);
+      padding: 30px;
+      border: 3px solid #4CAF50;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      text-align: center; z-index: 1;
+      width: 300px; max-width: 90vw;
+    }
+    .profile-pic {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 4px solid #00FF39;
+      object-fit: cover;
+    }
+    h1 { font-size: 28px; margin: 10px 0; }
+
+    .links a {
+      display: flex; justify-content: center; align-items: center; gap: 10px;
+      padding: 10px; border-radius: 8px; text-decoration: none;
+      font-weight: bold; margin: 6px; border: 2px solid; background: rgba(255,255,255,0.1);
+    }
+    .facebook { color: #1877f2; border-color: #1877f2; background: #fff; }
+    .tiktok   { color: #000;    border-color: #000;    background: #fff; }
+    .youtube  { color: red;     border-color: red;     background: #fff; }
+    .comment-btn {
+      background: white; color: #25D366; border: 2px solid #25D366; cursor: pointer;
+    }
+
+    /* Popups & overlays */
+    .overlay, #shareOverlay, #menuOverlay {
+      position: fixed; inset: 0;
+      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.4);
+      z-index: 99; display: none;
+    }
+    .overlay.active, #shareOverlay.active, #menuOverlay.active { display: block; }
+
+    .popup, #sharePopup {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px; padding: 30px 25px;
+      z-index: 100; width: 90%; max-width: 420px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+      display: flex; flex-direction: column; gap: 16px;
+      border: 1px solid red;
+    }
+    .popup.active, #sharePopup.active { transform: translate(-50%, -50%) scale(1); }
+    .popup h2, #sharePopup h2 { text-align: center; margin: 0; font-size: 22px; }
+    .popup input, .popup textarea, #sharePopup input {
+      width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid #ccc;
+      font-size: 16px; margin-bottom: 14px; background: rgba(255,255,255,0.1); outline: none;
+    }
+    .popup textarea { resize: none; }
+    .popup button, #sharePopup button {
+      padding: 12px 20px; background-color: #25D366; color: white; border: none;
+      border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; align-self: center;
+    }
+    .close-btn {
+      position: absolute; top: 12px; right: 16px;
+      font-size: 22px; cursor: pointer; color: #ff4444; font-weight: bold;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #333; color: #fff; padding: 12px 20px; border-radius: 6px; font-size: 15px;
+      z-index: 999; display: none; animation: fade 0.3s ease;
+    }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Canvas */
+    canvas#bg {
+      position: fixed; top: 0; left: 0; z-index: 0; display: block;
+    }
+
+    /* Tabs inside popup */
+    .tab-labels { display: flex; justify-content: space-around; border-bottom: 2px solid #ccc; }
+    .tab-text { padding: 10px 20px; font-weight: bold; cursor: pointer; position: relative; }
+    .tab-text.active::after {
+      content: ""; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px;
+      background: #25D366; border-radius: 2px;
+    }
+    .hidden { display: none; }
+
+    /* Extra elements */
+    #sharePopup input { text-align: center; }
+    #qrImage { width: 200px; height: 200px; border: none; outline: none; box-shadow: none; align-self: center; }
+    .cx{ font-size: 20px; }
+    .cx1{ font-size: 13px; }
+    .inbox-button {
+      display: inline-flex; align-items: center; gap: 8px;
+      background-color: #ff4d4d; color: white;
+      padding: 10px 18px; border-radius: 8px; text-decoration: none;
+      font-weight: bold; font-size: 16px; transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+    }
+
+    .username { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-size: 27px; }
+    .verified-badge { width: 17px; height: 16px; background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg'); background-size: cover; background-repeat: no-repeat; display: inline-block; }
+
+    body.light .popup h2, body.light #sharePopup h2 { color: #000; }
+    body.dark  .popup h2, body.dark  #sharePopup h2 { color: #fff; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; width: 280px;
+      transform: translateX(-100%); transition: transform 0.3s ease;
+      z-index: 120; padding: 18px 16px 24px;
+      background: rgba(20,20,20,0.85); color: #fff;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(255,255,255,0.15);
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .sidebar.active { transform: translateX(0); }
+    .sidebar .top-row {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+    }
+    .sidebar .close-menu {
+      font-size: 22px; cursor: pointer; color: #ff6666; line-height: 1;
+    }
+    .sidebar h3 { margin: 0; font-size: 20px; }
+    .menu-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .menu-item {
+      display: flex; align-items: center; gap: 10px; padding: 12px 12px;
+      border-radius: 12px; text-decoration: none; color: inherit;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    }
+    .menu-item:hover { background: rgba(255,255,255,0.15); }
+  </style>
+</head>
+
+<body class="light">
+  <!-- Background Canvas -->
+  <canvas id="bg"></canvas>
+
+  <!-- Top Buttons -->
+  <div class="menu-toggle" id="menuToggle" title="Menu"><i class="fa-solid fa-bars"></i></div>
+  <div class="anim-toggle" id="animToggle" title="Switch Animation"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+  <div class="theme-toggle" id="themeToggle" title="Toggle Theme"><i class="fas fa-adjust"></i></div>
+
+  <!-- Profile Container -->
+  <div class="container" id="title">
+    <img class="profile-pic" src="mind of hasan.png" alt="Profile Picture">
+    <h1 class="username">Mind Of Hasan <span class="verified-badge"></span></h1>
+
+    <marquee class="cx" behavior="scroll" direction="left" scrollamount="4"
+             onmouseover="this.stop();" onmouseout="this.start();">
+      ভাগ্যে যা আছে, তা-ই হবে, আমি শুধু চেষ্টা করে যাবো,
+      হার-জিতের চিন্তা নয়, নিজের পথে নিঃশব্দে হাঁটবো ।
+    </marquee>
+
+    <div class="links">
+      <a class="facebook" href="https://www.facebook.com/share/1GFisgoXwf/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+      <a class="tiktok"   href="https://www.tiktok.com/@mindofhasan" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+      <a class="youtube"  href="https://youtube.com/@mind-of-hasan"   target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+    </div>
+  </div>
+  <!-- Share Popup -->
+  <div class="overlay" id="shareOverlay"></div>
+  <div class="popup" id="sharePopup">
+    <span class="close-btn" id="closeSharePopup">×</span>
+    <h2>Share This Page</h2>
+    <img id="qrImage" src="" alt="QR Code" />
+    <input type="text" id="shareLink" readonly value="" />
+    <button id="copyShareBtn">Copy Link</button>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div id="menuOverlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="top-row">
+      <h3>Site Menu</h3>
+      <span class="close-menu" id="closeMenu" title="Close">×</span>
+    </div>
+    <nav class="menu-list">
+      <!-- Home -->
+<a class="menu-item" href="index.html">
+  <i class="fa-solid fa-house"></i> <span>Home</span>
+</a>
+<a class="menu-item" href="music.html">
+  <i class="fa-solid fa-music"></i> <span>Music</span>
+</a>
+
+<a class="menu-item" href="tools.html">
+  <i class="fa-solid fa-screwdriver-wrench"></i> <span>Tools</span>
+</a>
+
+<!-- Telegram Group -->
+<a class="menu-item" href="https://t.me/mindofhasan" target="_blank">
+  <i class="fa-brands fa-telegram"></i> <span>Telegram Group</span>
+</a>
+<!-- Email -->
+<a class="menu-item" 
+   href="mailto:mindofhasan@yahoo.com?subject=✉️%20যোগাযোগ&body=নামঃ%20%0D%0Aঠিকানাঃ%20%0D%0Aমন্তব্যঃ%20">
+  <i class="fa-solid fa-envelope"></i> 
+  <span>Email</span>
+</a>
+      <!-- Share Button 1 -->
+<a class="menu-item shareBtn" href="javascript:void(0)">
+  <i class="fa-solid fa-share-nodes"></i> <span>Share</span>
+</a>
+      <!-- ভবিষ্যতে আরও মেনু চাইলে নিচে যুক্ত করুন -->
+      <!-- <a class="menu-item" href="#"><i class="fa-solid fa-user"></i> Profile</a> -->
+    </nav>
+  </aside>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+<script>
+/* ------------------------------
+   Theme & Animation Toggles
+--------------------------------*/
+const themeToggle = document.getElementById('themeToggle');
+const animToggle  = document.getElementById('animToggle');
+const qrImage     = document.getElementById('qrImage');
+
+function setThemeInitial() {
+  // ডিফল্ট: dark
+  if (!document.body.classList.contains('dark') && !document.body.classList.contains('light')) {
+    document.body.classList.add('dark');
+  }
+}
+setThemeInitial();
+
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  document.body.classList.toggle('light');
+
+  // শেয়ার পপআপ খোলা থাকলে QR ইমেজ থিম অনুযায়ী বদলাও
+  if (document.getElementById("sharePopup").classList.contains('active')) {
+    qrImage.src = document.body.classList.contains("dark") ? "dark.png" : "light.png";
+  }
+});
+
+/* ------------------------------
+   Sidebar Menu (Slide + Blur)
+--------------------------------*/
+const menuToggle   = document.getElementById('menuToggle');
+const sidebar      = document.getElementById('sidebar');
+const menuOverlay  = document.getElementById('menuOverlay');
+const closeMenu    = document.getElementById('closeMenu');
+
+function openMenu() {
+  sidebar.classList.add('active');
+  menuOverlay.classList.add('active');
+}
+function closeMenuFn() {
+  sidebar.classList.remove('active');
+  menuOverlay.classList.remove('active');
+}
+menuToggle.addEventListener('click', openMenu);
+closeMenu.addEventListener('click', closeMenuFn);
+menuOverlay.addEventListener('click', closeMenuFn);
+
+/* ------------------------------
+   Share Popup + QR + Copy
+--------------------------------*/
+// একাধিক শেয়ার বাটন ধরতে হবে
+const shareBtns = document.querySelectorAll(".shareBtn");
+const sharePopup = document.getElementById("sharePopup");
+const shareOverlay = document.getElementById("shareOverlay");
+const closeSharePopup = document.getElementById("closeSharePopup");
+const shareLinkInput = document.getElementById("shareLink");
+const copyShareBtn = document.getElementById("copyShareBtn");
+
+// সব শেয়ার বাটনের জন্য ইভেন্ট
+shareBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const url = window.location.href;
+    shareLinkInput.value = url;
+    qrImage.src = document.body.classList.contains("dark") ? "dark.png" : "light.png";
+    sharePopup.classList.add("active");
+    shareOverlay.classList.add("active");
+
+    // ✅ মেনু অটো ক্লোজ
+    closeMenuFn();
+  });
+});
+
+closeSharePopup.onclick = () => { 
+  sharePopup.classList.remove("active"); 
+  shareOverlay.classList.remove("active"); 
+};
+shareOverlay.addEventListener('click', () => { 
+  sharePopup.classList.remove("active"); 
+  shareOverlay.classList.remove("active"); 
+});
+
+copyShareBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+    showToast("Link copied to clipboard!");
+  }).catch(() => {
+    showToast("Failed to copy.");
+  });
+});
+
+/* ------------------------------
+   Toast
+--------------------------------*/
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+  setTimeout(() => { toast.style.display = "none"; }, 3000);
+}
+
+/* ------------------------------
+   Canvas Animations (Particles + Fireworks)
+--------------------------------*/
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let animMode = 'particles'; // default
+animToggle.addEventListener('click', () => {
+  animMode = (animMode === 'particles') ? 'fireworks' : 'particles';
+  particles = [];
+  fwArray = [];
+  fwParticles = [];
+});
+
+/* ---- Particles ---- */
+const colors = ["#ff3b3b", "#3bff3b", "#3b3bff", "#ffff3b", "#ff3bff"];
+const sizes = [5, 6, 7, 8, 10];
+const mouse = { x: undefined, y: undefined, radius: 80 };
+window.addEventListener("mousemove", function (e) { mouse.x = e.x; mouse.y = e.y; });
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = sizes[Math.floor(Math.random() * sizes.length)];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+    this.weight = Math.random() * 1 + 1;
+    this.directionX = Math.random() * 4 - 2;
+  }
+  update() {
+    if (this.y > canvas.height) {
+      this.y = 0 - this.size;
+      this.x = Math.random() * canvas.width;
+      this.weight = Math.random() * 1 + 2;
+    }
+    this.weight += 0.05;
+    this.y += this.weight;
+    this.x += this.directionX;
+    const dx = this.x - (mouse.x ?? -9999);
+    const dy = this.y - (mouse.y ?? -9999);
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    if (distance < mouse.radius + this.size) {
+      this.y -= 2;
+      this.weight *= -0.5;
+    }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
+let particles = [];
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 200; i++) particles.push(new Particle());
+}
+
+/* ---- Fireworks ---- */
+let fwArray = [];
+let fwParticles = [];
+
+function rand(min, max) { return Math.random() * (max - min) + min; }
+
+class Firework {
+  constructor() {
+    this.x = canvas.width / 2;
+    this.y = canvas.height;
+    this.targetX = rand(100, canvas.width - 100);
+    this.targetY = rand(100, canvas.height / 2);
+    this.speed = 5;
+    this.angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+    this.distanceToTarget = Math.hypot(this.targetX - this.x, this.targetY - this.y);
+    this.traveled = 0;
+    this.color = `hsl(${rand(0,360)},100%,50%)`;
+  }
+  update(index) {
+    const vx = Math.cos(this.angle) * this.speed;
+    const vy = Math.sin(this.angle) * this.speed;
+    this.x += vx; this.y += vy;
+    this.traveled += this.speed;
+    if (this.traveled >= this.distanceToTarget) {
+      fwArray.splice(index, 1);
+      createFWParticles(this.targetX, this.targetY, this.color);
+    }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
+
+class FWParticle {
+  constructor(x, y, color) {
+    this.x = x; this.y = y; this.color = color;
+    this.angle = rand(0, Math.PI * 2); this.speed = rand(2, 8);
+    this.friction = 0.95; this.gravity = 0.05;
+    this.alpha = 1; this.decay = rand(0.01, 0.02);
+  }
+  update(index) {
+    this.speed *= this.friction;
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed + this.gravity;
+    this.alpha -= this.decay;
+    if (this.alpha <= 0) fwParticles.splice(index, 1);
+  }
+  draw() {
+    ctx.save(); ctx.globalAlpha = this.alpha;
+    ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = this.color; 
+    ctx.fill(); 
+    ctx.restore();
+  }
+}
+function createFWParticles(x, y, color) {
+  let count = 100;
+  while (count--) fwParticles.push(new FWParticle(x, y, color));
+}
+
+/* ---- Master Animate Loop ---- */
+function animate() {
+  requestAnimationFrame(animate);
+
+  const isDark = document.body.classList.contains("dark");
+
+  // ✅ দুই মোডেই ডার্ক/লাইট ব্যাকগ্রাউন্ড এডজাস্ট
+  ctx.fillStyle = (isDark ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.2)");
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (animMode === 'particles') {
+    if (particles.length === 0) initParticles();
+    particles.forEach(p => { p.update(); p.draw(); });
+  } else {
+    if (Math.random() < 0.05) fwArray.push(new Firework());
+    fwArray.forEach((fw, i) => { fw.update(i); fw.draw(); });
+    fwParticles.forEach((p, i) => { p.update(i); p.draw(); });
+  }
+}
+initParticles();
+animate();
+</script>
+</body>
+</html>
